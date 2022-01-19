@@ -13,6 +13,7 @@ pillow = [
   { version = "^9", python = "^3.9" },
   { version = "~7", python = "~3.7 || ~3.8" },
 ]
+lxml = { version = "~4.2.0", markers = "platform_python_implementation == 'PyPy'" }
 
 [tool.poetry.dev-dependencies]
 black = "^21.12b0"
