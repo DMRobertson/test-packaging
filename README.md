@@ -430,3 +430,20 @@ build-backend = "poetry.core.masonry.api"
 ```
 
 When I installed in the pypy env, I got lxml. On Cpython env, I didn't. Nice.
+
+
+# Extras
+
+Specify as follows:
+
+```
+[tool.poetry.dependencies]
+# ...
+aiohttp = { version = "^3.8", optional = true }
+aio_ping = { version = "^0.1.3", optional = true }
+
+[tool.poetry.extras]
+aio = ["aiohttp", "aio_ping"]
+```
+
+Lockfile adds in a bunch of guff. `poetry install` does nothing. `poetry install -E aio` does. I think this is working as intended.
