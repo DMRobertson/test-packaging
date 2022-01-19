@@ -9,17 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.7"
 requests = "^2.27.1"
-pillow = [
-  { version = "^9", python = "^3.9" },
-  { version = "~7", python = "~3.7 || ~3.8" },
-]
 lxml = { version = "~4.2.0", markers = "platform_python_implementation == 'PyPy'" }
-
-[tool.poetry.dev-dependencies]
-black = "^21.12b0"
-isort = "^5.10.1"
-mypy = "0.920"
-poetry = "^1.1.12"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -390,3 +390,43 @@ Doing this and locking spews out a big diff. Note that
 
 installing under a 3.7 env (`poetry env use 3.7`) installs pillow 7.
 installing under a 3.9 env (`poetry env use 3.9`) installs pillow 9. Confusingly, `poetry show --tree` shows both---I guess because they'll have different dependencies.
+
+What about an environment marker? Let's try installing something only under pypy.
+
+```
+lxml = { version = "~4.2.0", markers = "platform_python_implementation == 'PyPy'" }
+```
+
+See [diff](https://github.com/DMRobertson/test-packaging/commit/a227b6e7a7d18ba946d54ca3c9683387c0ad890d) for the lockfile change. No changes when I install though:
+
+```
+ $ poetry install
+Installing dependencies from lock file
+
+No dependencies to install or update
+
+Installing the current project: hello (0.1.0)
+```
+
+I was able to create a pypy environment with `poetry env use pypy3`. But this clashed with an existing 3.7 virtualenv it was already managing. This is https://github.com/python-poetry/poetry/issues/2089. I wasn't able to install `typed-ast` on pypy because compiling some kind of C extension failed. Let's try simplifying the toml file.
+
+```toml
+[tool.poetry]
+name = "hello"
+version = "0.1.0"
+description = "Hello, world!"
+authors = ["David Robertson <davidr@element.io>"]
+license = "WTFPL"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+requests = "^2.27.1"
+lxml = { version = "~4.2.0", markers = "platform_python_implementation == 'PyPy'" }
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+```
+
+When I installed in the pypy env, I got lxml. On Cpython env, I didn't. Nice.
