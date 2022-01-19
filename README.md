@@ -361,3 +361,32 @@ Bad:
 - more work to use (setup.* -> pyproject.toml) and maybe a little off the beaten track
   - feels like there's more community momentum though.
 
+# Python versions
+
+Let's see how environment markers get handled. I'll start with python versions, for which poetry has dedicated syntax.
+
+I don't remember marking the project as `^3.10`. Let's relax that to `^3.7`. I'll pull in a different version of `pillow` on different python versions.
+
+```toml
+[tool.poetry.dependencies]
+python = "^3.7"
+requests = "^2.27.1"
+pillow = [
+  { version = "^9.0.0", python = "^3.9" },
+  { version = "~7.0", python = "~3.7,~3.8" },
+]
+```
+
+Probably best to point at the [diff](https://github.com/DMRobertson/test-packaging/commit/9877b812786f4533dcde2d658c03ba0d8b18c818) here. 
+
+I think that:
+- the lockfile will only contain stuff for the Python version supported at the top level
+- python versions and environment markers are probably best kept mutually exclusive (see [here](https://github.com/python-poetry/poetry/issues/5066)).
+
+Doing this and locking spews out a big diff. Note that
+- I ran this on 3.10, but we now have a transitive dependency on `typed-ast` described in the lock, for <3.8 only
+- pillow appears twice in the lock file's list of packages
+- hashes for pillow 7 and pillow 9 wheels etc appear in the metadata.
+
+installing under a 3.7 env (`poetry env use 3.7`) installs pillow 7.
+installing under a 3.9 env (`poetry env use 3.9`) installs pillow 9. Confusingly, `poetry show --tree` shows both---I guess because they'll have different dependencies.
